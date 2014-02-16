@@ -1,0 +1,59 @@
+/* Problem 1 */
+\project_{pizza}
+    \select_{gender = "female" and age > 20}
+        (Person \join Eats);
+
+/* Problem 2 */
+\project_{name}
+        (\select_{pizzeria = "Straw Hat"} (Serves)
+            \join
+	        (\select_{gender = "female"} Eats
+                    \join Person));
+/* Problem 3 */
+\project_{pizzeria} 
+     \select_{ (name = "Amy" or name = "Fay") and price < 10}
+         ( Eats \join Serves );
+
+/* Problem 4 */
+\project_{pizzeria} 
+     \select_{name = "Amy" and n1 = "Fay" and price < 10} (
+         Serves \join Eats \join \rename_{n1, pizza} Eats );
+
+/* Problem 5 */
+\project_{name} ( \select_{pizzeria = "Dominos"} 
+    (Eats \join Serves))
+         \diff \project_{name} \select_{pizzeria = "Dominos"} Frequents;
+
+/* Problem 6 */
+\project_{pizza} (Eats) \diff \project_{pizza} (
+    \select_{age >= 24} (Person \join Eats))
+\union (
+\project_{pizza} (Serves) 
+    \diff \project_{pizza}
+       ( \select_{price > 10} Serves));
+
+/* Problem 7 */
+ \rename_{age2}(\project_{age} \select_{pizza = "mushroom"}( Person \join Eats)) \diff (
+ \project_{age2} ( \select_{age1 > age2} (
+ \rename_{age1}(\project_{age} \select_{pizza = "mushroom"}( Person \join Eats))
+\cross \rename_{age2}(\project_{age} \select_{pizza = "mushroom"}( Person \join Eats)))));
+
+/* Problem 8 */
+\project_{pizzeria} (Serves)
+\diff
+\project_{pizzeria} 
+   ( Serves \join (
+      (\project_{pizza} (\select_{age <= 30} (Person \join Eats)))
+      \diff
+      \project_{pizza} ( \select_{age > 30} (Person \join Eats))));
+
+/* Problem 9 */
+\project_{pizzeria} 
+	\select_{pizza <> pizza2 and pizzeria = pizzeria2} 
+		((Serves \join Eats \join \select_{age > 30} Person) 
+\cross 
+	((\rename_{pizzeria2, pizza2} 
+		\project_{pizzeria, pizza} 
+			(Serves \join Eats \join \select_{age > 30} Person))));
+/* This only selects pizzerias that serve 2 or more pizzas eaten by people over 30. I could not find
+a way to guarantee all pizzas eaten by people over 30 were served */
