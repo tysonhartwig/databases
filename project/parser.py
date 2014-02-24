@@ -35,15 +35,14 @@ def process_file(filename):
     # At this point, 'dom' contains a DOM representation of an 'Items'
     # XML file. For example, you can use dom.getElementsByTagName
     # to get specific document elements.
-    print domItems.documentElement.nodeType
-    print domItems.documentElement.tagName
-    print domItems.documentElement.firstChild.data
+    # print domItems.documentElement.tagName
+    # print domItems.documentElement.firstChild.data
     for item in domItems.documentElement.childNodes:
-    	print item.getAttribute('ItemID')
+    	print item.nodeName
+ 	print item.nodeType
     category = domItems.getElementsByTagName('Category')
-    print category[0].firstChild.data
-    print 
-
+    for cat in category:
+	print cat.firstChild.data
 
 def main():
     if len(sys.argv) <= 1:
