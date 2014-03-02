@@ -8,9 +8,8 @@ from __future__ import print_function
 import datetime
 import locale
 import sys
-# import xml.dom.minidom
-try:
-    import xml.etree.cElementTree
+try:                                 # cElementTree is faster but 
+    import xml.etree.cElementTree    # not standard.
 except ImportError:
     import xml.etree.ElementTree
 
@@ -21,7 +20,7 @@ def transformDollar(dollar_str):
     """
     return '{:.2f}'.format(locale.atof(dollar_str.strip("$")))
 
-def transformDttm(dttm_str):
+def transform_dttm(dttm_str):
     """
     Returns date/time string in format like "2001-03-25 10:25:57" from
     a format like "Mar-25-01 10:25:57".
@@ -33,6 +32,7 @@ class Processor:
     def __init__(self):
         # self.categoryTable = list()
         self.categoryFile = open('category.txt', 'a+')
+        self.auctionsFile = open('auctions.txt', 'a+')
 
     def iterparent(self, tree):
         for parent in tree.getiterator():
@@ -44,11 +44,29 @@ class Processor:
         root = domItems.getroot()
         for parent, child in self.iterparent(root):
             print(parent.tag, child.tag)
+            if child.tag == 'Name':
+                itemID = parent.get('ItemID')
+                row = itemID + '<>' + child.text
+            elif child.tag == 'Category':
+                print(itemID, '<>', child.text, 
+                     file = self.categoryFile)
+            elif child.tag == 'First_Bid' or child.tag == 'Description':  
+                print('<>', child.text, 
+                     file = self.auctionsFile, end = ' ')
+            elif child.tag == 'Started' or child.tag == 'Ends':
+                print('<>', transform_dttm(child.text), 
+                     file = self.auctionsFile, end = ' ')
+            elif child.tag == 'Description':
+                row = row + child.text
+                print(row, '\n', file = self.auctionsFile)
+        """
+            else: print('Unknown Tag?')
 
         for item in root:
             for category in item.findall('Category'):
-               print(item.get('ItemID'),'<>', category.text, file=self.categoryFile)
-
+               print(item.get('ItemID'),'<>', category.text, 
+                     file=self.categoryFile)
+        """
 def main():
     if len(sys.argv) <= 1:
         print("Usage: python3", sys.argv[0], "[file] [file] ...")
