@@ -1,0 +1,11 @@
+# .gitignore, Tyson Hartwig 9 MAR 2014
+*.xml
+*.dat
+*.csv
+*.zip
+*.gz
+*.log
+.DS_Store
+thumbs.db
+*~
+
